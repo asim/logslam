@@ -3,8 +3,8 @@ require 'logslam'
 require 'yaml'
 
 def usage
-  puts "\nExample:\n\tclient: #{$0} --get logfile --username foo --password bar\n\tserver: #{$0} -s -H localhost -P 8089 -d /tmp\n"
-  puts "\n\nCredentials can be stored in ~/.logslam in YAML format:\n\tusername: foo\n\tpassword: bar\n\thost: baz\n"
+  puts "\nExample:\n\tclient: #{$0} --get logfile --username foo --password bar\n\tserver: #{$0} -s -h localhost -p 8089 -d /tmp\n"
+  puts "\n\nCredentials can be stored in ~/.logslam in YAML format:\n\tusername: foo\n\tpassword: bar\n\thost: baz\n\tport: 8089\n"
   exit
 end
 
@@ -61,21 +61,15 @@ if options.empty?
   usage
 end
 
-# unless options.has_key?(:server) || options.has_key?(:configfile)
-#   if options.has_key?(:username) == false || options.has_key?(:password) == false
-#     # Check yaml file
-#     if File.exists?(File.expand_path('~/.logslam'))
-#       credentials = YAML.load_file(File.expand_path('~/.logslam'))
-#       options[:username] = credentials["username"]
-#       options[:password] = credentials["password"]
-#       options[:host] ||= credentials["host"]
-#     end
-    
-#     if options.has_key?(:username) == false || options.has_key?(:password) == false
-#       puts opts
-#       usage
-#     end
-#   end
-# end
+unless options.has_key?(:server) || options.has_key?(:configfile)
+  # Check yaml file for client details
+  if File.exists?(File.expand_path('~/.logslam'))
+    credentials = YAML.load_file(File.expand_path('~/.logslam'))
+    options[:username] ||= credentials["username"]
+    options[:password] ||= credentials["password"]
+    options[:host] ||= credentials["host"]
+    options[:port] ||= credentials["port"]
+  end
+end
 
 Logslam.run(options)
