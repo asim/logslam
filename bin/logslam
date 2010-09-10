@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+require 'logslam'
+require 'yaml'
+
+def usage
+  puts "\nExample:\n\tclient: #{$0} --get logfile --username foo --password bar\n\tserver: #{$0} -s -H localhost -P 8089 -d /tmp\n"
+  puts "\n\nCredentials can be stored in ~/.logslam in YAML format:\n\tusername: foo\n\tpassword: bar\n\thost: baz\n"
+  exit
+end
+
+# Parse the command line arguments
+options = {}
+
+opts = OptionParser.new do |opts|
+  opts.on("-c", "--config-file FILE", "Config file to run server") do |n|
+    options[:configfile] = n
+  end
+  opts.on("-D", "--daemonize", "Daemonize logslam when running the server") do |n|
+    options[:daemonize] = true
+  end
+  opts.on("-d", "--dir DIRECTORY", "The directory logs files are in") do |n|
+    options[:directory] = n
+  end
+  opts.on("-g", "--get FILE", "Specify name of log file") do |n|
+    options[:logfile] = n
+  end
+  opts.on("-h", "--host HOST", "Host to connect to or run on as server (default: 0.0.0.0)") do |n|
+    options[:host] = n
+  end
+  opts.on("-i", "--interactive", "Operate in interactive mode") do |n|
+    options[:interactive] = true
+  end
+  opts.on("-l", "--list", "List available log files") do |n|
+    options[:list] = true
+  end
+  opts.on("-n", "--lines LINES", "Number of lines to tail") do |n|
+    options[:lines] = n
+  end
+  opts.on("-P", "--port PORT", "Port to connect to or run as server (default: 8089)") do |n|
+    options[:port] = n
+  end
+  opts.on("-p", "--password [password]") do |n|
+    options[:password] = n || ask("password: ") { |q| q.echo = "*" }
+  end
+  opts.on("-u", "--username USERNAME") do |n|
+    options[:username] = n
+  end
+  opts.on("-s", "--server", "Run a LogslamServer") do |n|
+    options[:server] = true
+  end
+  opts.on("--help") do |n|
+    puts opts
+    puts usage
+  end
+end
+
+opts.parse! ARGV
+
+if options.empty?
+  puts opts
+  usage
+end
+
+# unless options.has_key?(:server) || options.has_key?(:configfile)
+#   if options.has_key?(:username) == false || options.has_key?(:password) == false
+#     # Check yaml file
+#     if File.exists?(File.expand_path('~/.logslam'))
+#       credentials = YAML.load_file(File.expand_path('~/.logslam'))
+#       options[:username] = credentials["username"]
+#       options[:password] = credentials["password"]
+#       options[:host] ||= credentials["host"]
+#     end
+    
+#     if options.has_key?(:username) == false || options.has_key?(:password) == false
+#       puts opts
+#       usage
+#     end
+#   end
+# end
+
+Logslam.run(options)
