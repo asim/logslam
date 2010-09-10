@@ -13,7 +13,7 @@ without needing ssh access to the server.
         -c, --config-file FILE           Config file to run server
         -D, --daemonize                  Daemonize logslam when running the server
         -d, --dir DIRECTORY              The directory logs files are in
-	-g, --get FILE                   Specify name of log file
+        -g, --get FILE                   Specify name of log file
     	-h, --host HOST                  Host to connect to or run on as server (default: 0.0.0.0)
     	-i, --interactive                Operate in interactive mode
     	-l, --list                       List available log files
